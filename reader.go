@@ -6,10 +6,7 @@ import (
 	"reflect"
 )
 
-const (
-	defaultLength    = 10
-	defaultAddLength = 5
-)
+const SensitiveDataMaskString = "***************"
 
 type Reader interface {
 	Register() error
@@ -66,9 +63,9 @@ func printTable(p Printer) {
 		field := values.Field(i)
 		structField := values.Type().Field(i)
 
-		_, ok := structField.Tag.Lookup("secret")
-		if ok {
-			data = append(data, []string{structField.Name, mask(field.String())})
+		secretTag, ok := structField.Tag.Lookup("secret")
+		if ok && secretTag == "true" {
+			data = append(data, []string{structField.Name, SensitiveDataMaskString})
 		} else {
 			data = append(data, []string{structField.Name, field.String()})
 		}
@@ -79,18 +76,4 @@ func printTable(p Printer) {
 	table.SetAlignment(tablewriter.ALIGN_LEFT)
 
 	table.Render()
-}
-
-func mask(value string) string {
-	length := defaultLength
-	if len(value) > defaultLength {
-		length = len(value) + defaultAddLength
-	}
-	runes := make([]rune, length)
-
-	for i := 0; i < length; i++ {
-		runes[i] = '*'
-	}
-
-	return string(runes)
 }
