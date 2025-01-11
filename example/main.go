@@ -12,8 +12,8 @@ import (
 
 type Config struct {
 	Name     string `env:"MY_NAME"`
-	Username string `env:"MY_USERNAME" secret:""`
-	Password string `env:"MY_PASSWORD" secret:""`
+	Username string `env:"MY_USERNAME" secret:"true"`
+	Password string `env:"MY_PASSWORD" secret:"true"`
 }
 
 var config Config
